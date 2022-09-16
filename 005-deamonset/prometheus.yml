@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata: 
+  name: prometheus-daemonset
+  labels:
+    tier: monitoring
+spec:
+  selector:
+    matchLabels:
+      tier: monitoring
+  template:
+    metadata:
+      labels:
+        tier: monitoring
+    spec:
+      containers:
+      - name: prometheus
+        image: prom/node-exporter
+        ports:
+        - containerPort: 80

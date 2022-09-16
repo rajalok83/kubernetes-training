@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: pwa
+  name: pwa
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      run: pwa
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: pwa
+        env: prod
+    spec:
+      containers:
+      - image: nginx:1.7.9
+        name: pwa
+        resources:
+          limits:
+            cpu: 200m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pwa-service 
+  labels: 
+    env: prod
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+  selector:
+    env: prod
+---
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  labels:
+    env: prod
+  name: pwa
+spec:
+  maxReplicas: 10
+  metrics:
+    - resource: 
+        name: memory
+        target:
+          averageUtilization: 80
+          type: Utilization
+      type: Resource
+    - resource:
+        name: cpu
+        target:
+          averageUtilization: 2
+          type: Utilization
+      type: Resource
+  minReplicas: 2
+  scaleTargetRef:
+    apiVersion: apps/pv1
+    kind: Deployment
+    name: pwa

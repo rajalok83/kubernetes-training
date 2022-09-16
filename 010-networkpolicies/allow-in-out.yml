@@ -1,0 +1,35 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-out-to-in
+  namespace: default
+spec:
+  podSelector: {}
+  ingress:
+  - from:
+    - podSelector: 
+        matchLabels:
+          test: out
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          test: in
+  policyTypes:
+  - Ingress
+  - Egress
+--- Before Policy
+--- k run busybox1 --image=busybox -- sleep 36000
+--- k run busybox2 --image=busybox -- sleep 36000
+--- k get pods -o wide
+--- k exec -it busybox2-68c5bd7fc9-zm2cc -- ping -c3 10.200.0.3
+--- Apply the NetworkPolicy
+--- k apply -f 010-networkpolicies/allow-out-to-in.yml
+--- After Policy
+--- k exec -it busybox2-68c5bd7fc9-zm2cc -- ping -c3 10.200.0.3
+--- Fails as label not applied
+--- Apply Label k label busybox2-68c5bd7fc9-zm2cc test=out
+--- k label pod busybox2-68c5bd7fc9-zm2cc test=out
+--- k get pods
+--- k label pod busybox1-699b4b7f9-rm6s7 test=in
+--- k exec -it busybox2-68c5bd7fc9-zm2cc -- ping -c3 10.200.0.3

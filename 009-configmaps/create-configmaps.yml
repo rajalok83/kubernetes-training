@@ -1,0 +1,7 @@
+apiVersion: v1
+data:
+  how: very
+  type: charm
+kind: ConfigMap
+metadata:
+  name: my-config-map

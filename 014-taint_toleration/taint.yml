@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-1
+spec:
+  containers:
+    - image: supergiantkir/animals:bear
+      name: bear1
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-2
+spec:
+  containers:
+  - name: bear2
+    image: supergiantkir/animals:bear
+  tolerations:
+  - key: "special"
+    operator: "Equal"
+    value: "true"
+    effect: "NoSchedule"
+--- Before run taint minion
+--- k taint nodes minion-2 special=true:NoSchedule
+--- Run 
+--- k apply -f 014-taint-toleration/taint.yml
+--- k get pod
+--- pod-1 not running
+--- describe pod-1
+--- k describe pod pod-1
+--- untaint node
+--- k taint nodes minion-2 special:NoSchedule-

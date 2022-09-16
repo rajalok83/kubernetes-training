@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: Pod 
+metadata:
+  creationTimestamp: null
+  labels:
+    run: nginx
+  name: with-node-affinity
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: datacenter
+            operator: In
+            values:
+            - blr
+            - mum
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 1
+        preference:
+          matchExpressions:
+          - key: region
+            operator: In
+            values:
+            - pun
+            - del
+  containers:
+  - image: nginx
+    name: with-node-affinity 
+
+
+--- Before Running
+--- k get nodes --show-labels                
+--- Run the yml
+--- k apply -f 013-nodeaffinity/nodeaffinity.yml
+--- k get pods
+--- Pod must be in pending
+--- Apply label (this is preferred not required)
+--- k label node minion-2 region=del
+--- Pod is still in pending
+--- k get pods
+--- Apply label (this is required)
+--- k label node minion-2 datacenter=mum
+--- Pod must now be schedlued and running  
+--- k get pods                                     

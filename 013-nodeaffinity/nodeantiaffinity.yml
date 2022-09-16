@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment 
+metadata:
+  creationTimestamp: null
+  labels:
+    run: web-server
+  name: web-server
+spec:
+  selector:
+    matchLabels:
+      app: web-store
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: web-store
+    spec:
+
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector :
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - web-store
+            topologyKey: "kubernetes.io/hostname"
+      containers:
+      - image: nginx
+        name: web-app 
+
+--- Before Running
+--- k get nodes --show-labels                
+--- Run the yml
+--- k apply -f 013-nodeaffinity/nodeaffinity.yml
+--- k get pods
+--- Pod must be in pending
+--- Apply label (this is preferred not required)
+--- k label node minion-2 region=del
+--- Pod is still in pending
+--- k get pods
+--- Apply label (this is required)
+--- k label node minion-2 datacenter=mum
+--- Pod must now be schedlued and running  
+--- k get pods                                     

@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: deny-all
+  namespace: default
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+--- Before Policy
+--- k run busybox1 --image=busybox -- sleep 36000
+--- k run busybox2 --image=busybox -- sleep 36000
+--- k get pods -o wide
+--- k exec -it busybox2-68c5bd7fc9-zm2cc -- ping -c3 10.200.0.3
+--- Apply the NetworkPolicy
+--- k apply -f 010-networkpolicies/deny-all.yml
+--- After Policy
+--- k exec -it busybox2-68c5bd7fc9-zm2cc -- ping -c3 10.200.0.3

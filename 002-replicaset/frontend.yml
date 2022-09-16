@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: frontend
+  labels:
+    abc: xyz
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      abc: xyz
+  template:
+    metadata:
+      labels:
+        abc: xyz
+    spec:
+      containers:
+      - name: php-redis
+        image: gcr.io/google_samples/gb-frontend:v3

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: webapp
+spec:
+  containers:
+  - name: pyweb
+    image: smehta26/pyweb:1.0
+    ports:
+    - containerPort: 5000
+  - name: redis
+    image: redis:alpine
